@@ -17,7 +17,7 @@ export function SearchBar({ fullData, onSelect, selectedUserId }: SearchProps) {
       : [];
 
   return (
-    <div className="max-w-5xl mx-auto px-4">
+    <div className="max-w-5xl mx-auto px-3 sm:px-4">
       <div className="relative">
         <input
           type="text"
