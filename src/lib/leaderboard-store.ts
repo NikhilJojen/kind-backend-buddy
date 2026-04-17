@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import {
   fetchLatestLeaderboard,
   fetchDailyByUserId,
@@ -7,6 +7,7 @@ import {
 } from "./external-supabase";
 
 let cachedData: LatestPlayer[] | null = null;
+const dailyCache = new Map<string, DailyEntry[]>();
 
 export function useLeaderboardData() {
   const [fullData, setFullData] = useState<LatestPlayer[]>(cachedData ?? []);
@@ -25,21 +26,30 @@ export function useLeaderboardData() {
       .finally(() => setLoading(false));
   }, []);
 
-  const top100 = fullData.slice(0, 100);
+  const top50 = fullData.slice(0, 50);
   const lastUpdated = fullData.length > 0 ? fullData[0].date : "";
 
-  return { fullData, top100, lastUpdated, loading, error };
+  return { fullData, top50, lastUpdated, loading, error };
 }
 
 export function usePlayerDaily(userId: string | null) {
-  const [data, setData] = useState<DailyEntry[]>([]);
+  const [data, setData] = useState<DailyEntry[]>(
+    userId && dailyCache.has(userId) ? dailyCache.get(userId)! : []
+  );
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (!userId) { setData([]); return; }
+    if (dailyCache.has(userId)) {
+      setData(dailyCache.get(userId)!);
+      return;
+    }
     setLoading(true);
     fetchDailyByUserId(userId)
-      .then(setData)
+      .then((d) => {
+        dailyCache.set(userId, d);
+        setData(d);
+      })
       .catch(() => setData([]))
       .finally(() => setLoading(false));
   }, [userId]);
