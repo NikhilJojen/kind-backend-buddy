@@ -22,14 +22,13 @@ export function Header({ lastUpdated }: HeaderProps) {
           />
         </div>
 
-        <div className="text-center min-w-0">
-          <h1
-            className="text-sm sm:text-lg md:text-2xl font-black tracking-wider text-gold uppercase truncate"
-            style={{ fontFamily: "'Orbitron', sans-serif" }}
-          >
-            AI Premier League
-          </h1>
-          <p className="text-[9px] sm:text-[10px] md:text-xs text-muted-foreground tracking-widest uppercase">
+        <div className="flex flex-col items-center justify-center min-w-0">
+          <img
+            src="/images/aipl-logo.png"
+            alt="AI Premier League"
+            className="h-10 sm:h-14 md:h-16 w-auto object-contain"
+          />
+          <p className="text-[9px] sm:text-[10px] md:text-xs text-muted-foreground tracking-widest uppercase mt-0.5">
             Leaderboard
           </p>
         </div>
