@@ -1,3 +1,4 @@
+import { Fragment } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import type { LatestPlayer, DailyEntry } from "@/lib/external-supabase";
 import { ComparisonChart } from "./ComparisonChart";
@@ -56,9 +57,8 @@ export function LeaderboardTable({
               const isExpanded = p.user_id === expandedUserId;
               const isTopPlayer = p.rank === 1;
               return (
-                <>
+                <Fragment key={p.user_id}>
                   <tr
-                    key={`${p.user_id}-row`}
                     onClick={() => onRowClick(p)}
                     className={[
                       "border-b border-glass-border/50 cursor-pointer transition-all duration-200",
@@ -85,7 +85,7 @@ export function LeaderboardTable({
                   </tr>
                   <AnimatePresence>
                     {isExpanded && (
-                      <tr key={`${p.user_id}-detail`} className="bg-background/40">
+                      <tr className="bg-background/40">
                         <td colSpan={5} className="p-0">
                           <motion.div
                             initial={{ height: 0, opacity: 0 }}
@@ -117,7 +117,7 @@ export function LeaderboardTable({
                       </tr>
                     )}
                   </AnimatePresence>
-                </>
+                </Fragment>
               );
             })}
           </tbody>
