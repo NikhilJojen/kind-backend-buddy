@@ -8,20 +8,16 @@ interface StatsProps {
 export function GlobalStats({ fullData }: StatsProps) {
   if (fullData.length === 0) return null;
 
-  const topPlayer = fullData[0];
-  const totalPlayers = fullData.length;
   const totalRuns = fullData.reduce((s, p) => s + p.cumulative_runs, 0);
-  const avgSR = fullData.reduce((s, p) => s + p.strike_rate, 0) / totalPlayers;
+  const totalSR = fullData.reduce((s, p) => s + p.strike_rate, 0);
 
   const stats = [
-    { label: "Top Player", value: topPlayer.user_name, icon: "👑" },
-    { label: "Total Players", value: totalPlayers.toLocaleString(), icon: "👥" },
     { label: "Total Runs", value: totalRuns.toLocaleString(), icon: "🏏" },
-    { label: "Avg Strike Rate", value: avgSR.toFixed(1), icon: "⚡" },
+    { label: "Total Strike Rate", value: totalSR.toFixed(1), icon: "⚡" },
   ];
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-3 px-4 max-w-5xl mx-auto">
+    <div className="grid grid-cols-2 gap-3 px-3 sm:px-4 max-w-5xl mx-auto">
       {stats.map((s, i) => (
         <motion.div
           key={s.label}
@@ -34,7 +30,7 @@ export function GlobalStats({ fullData }: StatsProps) {
           <p className="text-[10px] text-muted-foreground mt-1 uppercase tracking-wide">
             {s.label}
           </p>
-          <p className="text-sm md:text-lg font-bold text-foreground mt-0.5 truncate">
+          <p className="text-base md:text-lg font-bold text-foreground mt-0.5 truncate">
             {s.value}
           </p>
         </motion.div>
