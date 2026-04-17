@@ -45,3 +45,12 @@ export async function fetchDailyByUserId(userId: string): Promise<DailyEntry[]> 
     `user_id=eq.${encodeURIComponent(userId)}&order=date.asc`
   );
 }
+
+export async function fetchDailyByUserIds(userIds: string[]): Promise<DailyEntry[]> {
+  if (userIds.length === 0) return [];
+  const ids = userIds.map((id) => `"${id}"`).join(",");
+  return query<DailyEntry>(
+    "daily_leaderboard",
+    `user_id=in.(${encodeURIComponent(ids)})&order=date.asc`
+  );
+}
