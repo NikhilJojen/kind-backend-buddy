@@ -23,7 +23,7 @@ export function SearchBar({ fullData, onSelect, selectedUserId }: SearchProps) {
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="🔍 Search player by name..."
+          placeholder="🔍 Search your name..."
           className="w-full rounded-xl py-3 px-4 bg-glass border border-glass-border backdrop-blur-xl text-foreground placeholder:text-muted-foreground text-sm focus:outline-none focus:ring-2 focus:ring-gold/40"
         />
       </div>

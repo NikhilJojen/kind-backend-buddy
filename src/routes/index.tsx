@@ -8,6 +8,7 @@ import { GlobalStats } from "@/components/leaderboard/GlobalStats";
 import { LeaderboardTable } from "@/components/leaderboard/LeaderboardTable";
 import { SearchBar } from "@/components/leaderboard/SearchBar";
 import { PlayerDetail } from "@/components/leaderboard/PlayerDetail";
+import { FAQ } from "@/components/leaderboard/FAQ";
 import type { LatestPlayer } from "@/lib/external-supabase";
 
 export const Route = createFileRoute("/")({
@@ -115,6 +116,8 @@ function Index() {
             topDaily={topDaily}
             title="Top 50 Rankings"
           />
+
+          <FAQ />
         </main>
       </div>
     </div>
