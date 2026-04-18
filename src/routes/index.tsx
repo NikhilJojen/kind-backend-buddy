@@ -70,15 +70,15 @@ function Index() {
   }
 
   return (
-    <div
-      className="min-h-screen relative overflow-x-hidden"
-      style={{
-        backgroundImage: "url('/images/stadium-bg.jpg')",
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundAttachment: "fixed",
-      }}
-    >
+    <div className="min-h-screen relative">
+      <div
+        className="fixed inset-0 z-0"
+        style={{
+          backgroundImage: "url('/images/stadium-bg.jpg')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      />
       <div className="fixed inset-0 bg-background/85 z-0" />
 
       <div className="relative z-10 w-full">
