@@ -24,7 +24,7 @@ export function Header({ lastUpdated }: HeaderProps) {
 
         <div className="flex-1 flex items-center justify-center min-w-0 px-1">
           <img
-            src="/images/aipl-logo.svg"
+            src="/images/aipl-logo.png"
             alt="AI Premier League"
             className="h-9 sm:h-12 md:h-14 w-auto max-w-[160px] sm:max-w-[200px] md:max-w-[240px] object-contain"
           />
