@@ -1,6 +1,9 @@
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import { useState } from "react";
 import type { LatestPlayer, DailyEntry } from "@/lib/external-supabase";
 import { ComparisonChart } from "./ComparisonChart";
+import { RankChart } from "./RankChart";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface Props {
   player: LatestPlayer;
@@ -10,8 +13,32 @@ interface Props {
   onClose: () => void;
 }
 
+function getRankMovement(data: DailyEntry[]) {
+  if (data.length < 2) return null;
+  const sorted = data.slice().sort((a, b) => a.date.localeCompare(b.date));
+  const window = Math.min(5, sorted.length - 1);
+  const latest = sorted[sorted.length - 1];
+  const past = sorted[sorted.length - 1 - window];
+  const diff = past.rank - latest.rank; // positive = moved up
+  return { diff, days: window };
+}
+
 export function PlayerDetail({ player, dailyData, topDaily, loading, onClose }: Props) {
   const isTopPlayer = player.rank === 1;
+  const isMobile = useIsMobile();
+  const [mobileTab, setMobileTab] = useState<"runs" | "rank">("runs");
+
+  const movement = getRankMovement(dailyData);
+  const movementText = movement
+    ? movement.diff > 0
+      ? { text: `Moved up ${movement.diff} position${movement.diff !== 1 ? "s" : ""} in last ${movement.days} day${movement.days !== 1 ? "s" : ""}`, color: "text-emerald-400" }
+      : movement.diff < 0
+      ? { text: `Dropped ${Math.abs(movement.diff)} position${Math.abs(movement.diff) !== 1 ? "s" : ""} in last ${movement.days} day${movement.days !== 1 ? "s" : ""}`, color: "text-red-400" }
+      : { text: `No rank change in last ${movement.days} day${movement.days !== 1 ? "s" : ""}`, color: "text-muted-foreground" }
+    : null;
+
+  const chartCardClass =
+    "rounded-xl border border-glass-border bg-secondary/40 backdrop-blur-md p-3 sm:p-4";
 
   return (
     <motion.div
@@ -61,12 +88,84 @@ export function PlayerDetail({ player, dailyData, topDaily, loading, onClose }: 
         {loading ? (
           <div className="text-center py-8 text-muted-foreground">Loading history...</div>
         ) : dailyData.length > 0 ? (
-          <ComparisonChart
-            userData={dailyData}
-            topData={topDaily}
-            userName={player.user_name}
-            isTopPlayer={isTopPlayer}
-          />
+          <>
+            {isMobile ? (
+              <div>
+                <div className="flex items-center gap-1 p-1 mb-3 rounded-lg bg-secondary border border-glass-border w-full max-w-[240px] mx-auto">
+                  {(["runs", "rank"] as const).map((tab) => (
+                    <button
+                      key={tab}
+                      onClick={() => setMobileTab(tab)}
+                      className={`flex-1 text-[11px] uppercase tracking-wide font-semibold py-1.5 rounded-md transition-all ${
+                        mobileTab === tab
+                          ? "bg-gold/20 text-gold shadow-[0_0_8px_rgba(255,200,50,0.3)]"
+                          : "text-muted-foreground hover:text-foreground"
+                      }`}
+                    >
+                      {tab === "runs" ? "Runs" : "Rank"}
+                    </button>
+                  ))}
+                </div>
+                <div className={chartCardClass}>
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={mobileTab}
+                      initial={{ opacity: 0, x: 8 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -8 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">
+                        {mobileTab === "runs" ? "Runs Trend" : "Rank Trend"}
+                      </p>
+                      {mobileTab === "runs" ? (
+                        <ComparisonChart
+                          userData={dailyData}
+                          topData={topDaily}
+                          userName={player.user_name}
+                          isTopPlayer={isTopPlayer}
+                        />
+                      ) : (
+                        <>
+                          <RankChart data={dailyData} userName={player.user_name} />
+                          {movementText && (
+                            <p className={`text-[11px] mt-2 text-center ${movementText.color}`}>
+                              {movementText.text}
+                            </p>
+                          )}
+                        </>
+                      )}
+                    </motion.div>
+                  </AnimatePresence>
+                </div>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
+                <div className={chartCardClass}>
+                  <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">
+                    Runs Trend
+                  </p>
+                  <ComparisonChart
+                    userData={dailyData}
+                    topData={topDaily}
+                    userName={player.user_name}
+                    isTopPlayer={isTopPlayer}
+                  />
+                </div>
+                <div className={chartCardClass}>
+                  <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">
+                    Rank Trend
+                  </p>
+                  <RankChart data={dailyData} userName={player.user_name} />
+                  {movementText && (
+                    <p className={`text-[11px] mt-2 text-center ${movementText.color}`}>
+                      {movementText.text}
+                    </p>
+                  )}
+                </div>
+              </div>
+            )}
+          </>
         ) : (
           <p className="text-center text-muted-foreground py-4">No history data available.</p>
         )}
