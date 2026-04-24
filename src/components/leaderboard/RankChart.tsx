@@ -48,9 +48,9 @@ export function RankChart({ data, userName }: RankChartProps) {
               borderRadius: "8px",
               fontSize: "12px",
             }}
-            formatter={(value: number) => [`#${value}`, userName]}
-            labelFormatter={(label: string) =>
-              new Date(label).toLocaleDateString("en-IN", {
+            formatter={(value) => [`#${value}`, userName]}
+            labelFormatter={(label) =>
+              new Date(String(label)).toLocaleDateString("en-IN", {
                 day: "2-digit",
                 month: "short",
                 year: "numeric",
